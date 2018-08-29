@@ -1,1 +1,68 @@
-
+IceSpike:  
+  type: world  
+  debug: true 
+  events:  
+    on player starts sneaking:  
+    - if <player.flag[element]> == water && <player.has_flag[element_toggled].not> {  
+      - define blocks li@  
+      - define loc1 <player.location.cursor_on[3]>  
+      - define material <player.location.cursor_on[4].material> 
+      - wait 2s  
+      - if <player.flag[waterindex].matches[[1-3]]> { 
+      - define loc2 <player.location.cursor_on[9]> 
+      } 
+      else if <player.flag[waterindex].matches[[4-6]]> { 
+      - define loc2 <player.location.cursor_on[12]> 
+      }  
+      else if <player.flag[waterindex].matches[[7-9]]> { 
+      - define loc2 <player.location.cursor_on[15]> 
+      } 
+      - if <def[loc1]> == <def[loc2]> && <li@m@ice|m@packed_ice.contains[<def[material]>]> {   
+        - repeat 4 { 
+          - define blocks <def[blocks].include[<player.location.cursor_on[3].add[0,<def[value]>,0]>]>  
+          }  
+        - foreach <def[blocks]> {  
+          - modifyblock <def[value]> <def[material]>  
+          }  
+        }  
+        else if <def[loc1]> != <def[loc2]> && <li@m@ice|m@packed_ice.contains[<def[material]>]> {  
+          - define growth <def[loc1].points_between[<def[loc2]>].size.div[3].round_down> 
+          - foreach <def[loc1].points_between[<def[loc2]>]> { 
+            - if <player.flag[waterindex].matches[[7-9]]> { 
+              - if <def[loop_index]> <= <def[growth].div[2]> { 
+                - modifyblock <def[value].find.blocks[li@air|snow].within[2]> <def[material]> 
+                }  
+                else if <def[loop_index]> > <def[growth].div[2]> && <def[loop_index]> <= <def[growth].mul[2].add[1]> { 
+                - modifyblock <def[value].find.blocks[li@air|snow].within[1]> <def[material]> 
+                }  
+                else if <def[loop_index]> > <def[growth].mul[2].add[1]> { 
+                - modifyblock <def[value]> <def[material]> 
+                } 
+              } 
+              else if <player.flag[waterindex].matches[[4-6]]> { 
+                - if <def[loop_index]> <= <def[growth].div[2]> { 
+                  - modifyblock <def[value].find.blocks[li@air|snow].within[1]> <def[material]> 
+                  }  
+                  else if <def[loop_index]> > <def[growth].div[2]> && <def[loop_index]> <= <def[growth].mul[2].add[1]> { 
+                  - modifyblock <def[value].find.blocks[li@air|snow].within[1]> <def[material]> 
+                  }  
+                  else if <def[loop_index]> > <def[growth].mul[2].add[1]> { 
+                  - modifyblock <def[value]> <def[material]> 
+                  } 
+                } 
+              else if <player.flag[waterindex].matches[[1-3]]> { 
+                 - if <def[loop_index]> <= <def[growth].div[2]> { 
+                  - modifyblock <def[value].find.blocks[li@air|snow].within[1]> <def[material]> 
+                  }  
+                  else if <def[loop_index]> > <def[growth].div[2]> && <def[loop_index]> <= <def[growth].mul[2].add[1]> { 
+                  - modifyblock <def[value].find.blocks[li@air|snow].within[1]> <def[material]> 
+                  }  
+                  else if <def[loop_index]> > <def[growth].mul[2].add[1]> { 
+                  - modifyblock <def[value]> <def[material]> 
+                  } 
+                } 
+              } 
+            } 
+          } 
+        } 
+      }
